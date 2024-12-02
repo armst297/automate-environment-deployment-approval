@@ -7,15 +7,18 @@ import { Octo, createOcto } from "./octo"
 
 async function run(): Promise<void> {
   try {
-    const environments_to_approve = getMultilineInput("environment_allow_list")
+    const environments_to_approve = getMultilineInput("environment_allow_list", false)
     core.info(
       `input environments_to_approve: ${inspect(environments_to_approve)}`
     )
 
-    const actors_to_approve = getMultilineInput("actor_allow_list")
+    const actors_to_approve = getMultilineInput("actor_allow_list", false)
     core.info(`input actors_to_approve: ${inspect(actors_to_approve)}`)
 
-    const github_token: string = getStringInput("github_token")
+    const run_ids_to_approve = getMultilineInput(inputName="run_id_allow_list", false)
+    core.info(`input run_ids_to_approve: ${inspect(run_id_allow_list)}`)
+
+    const github_token: string = getStringInput("github_token", false)
 
     const repo = github.context.repo
     const octo: Octo = createOcto(repo, github.getOctokit(github_token))
@@ -25,7 +28,8 @@ async function run(): Promise<void> {
         octo,
         repo,
         actors_to_approve,
-        environments_to_approve
+        environments_to_approve,
+        run_ids_to_approve
       )
     } else {
       core.warning("Skipping all requests since DEBUG_SKIP_ALL_REQUESTS found")
